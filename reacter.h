@@ -49,7 +49,7 @@ int reacter_asyn_connect(
 int reacter_asyn_read(reacter_t r, struct rfile *file, int32_t mtime, read_cb callback, void *data);
 int reacter_asyn_write(reacter_t r, struct rfile *file, void *buffer, size_t len, int32_t mtime, write_cb callback, void *data);
 int reacter_add_timer(reacter_t r, struct rtimer *timer, timer_cb callback, void *data);
-int reacter_del_timer(reacter_r, int timer_id);
+int reacter_del_timer(reacter_t r, int timer_id);
 int reacter_add_signal(reacter_t r, struct rsignal *signal, signal_cb callback, void *data);
 int reacter_del_signal(reacter_t r, int sig);
 

@@ -48,7 +48,7 @@ struct _m_signal {
 struct _m_timer {
     uint64_t eventid;
     int timer_id;
-}
+};
 
 int _m_int_hash(void *key);
 int _m_int_equal(void *key1, void *key2);

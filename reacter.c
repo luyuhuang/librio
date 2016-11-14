@@ -163,7 +163,7 @@ int reacter_asyn_connect(
         new_file->eventid = event->eventid;
         new_file->fd = file->fd;
 
-        hashmap_add(r->file_events, &new_file, new_file);
+        hashmap_add(r->file_events, &new_file->fd, new_file);
 
         if (mtime >= 0) {
             struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
@@ -191,6 +191,7 @@ int reacter_add_timer(reacter_t r, struct rtimer *timer, timer_cb callback, void
     event->eventid = _reacter_get_nextid(r);
     event->r = r;
     event->type = REVENT_TIMER;
+    event->timer_id = timer->timer_id;
     event->mtime = timer->mtime;
     event->repeat = timer->repeat;
     event->callback = (void*)callback;
@@ -202,7 +203,7 @@ int reacter_add_timer(reacter_t r, struct rtimer *timer, timer_cb callback, void
     mtimer->eventid = event->eventid;
     mtimer->timer_id = timer->timer_id;
 
-    hashmap_add(r->timer_events, &mtimer->timer_id, timer);
+    hashmap_add(r->timer_events, &mtimer->timer_id, mtimer);
 
     struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
     new_timer->eventid = event->eventid;
@@ -313,7 +314,8 @@ static struct revent *_deal_overtime_event(reacter_t r, struct _h_timer *timer)
 static struct revent *_deal_signal_event(reacter_t r, int pipefd)
 {
     int sig = _get_signal_by_read_pipefd(pipefd);
-    struct revent *event = hashmap_get_value(r->signal_events, &sig);
+    struct _m_signal *signal = hashmap_get_value(r->signal_events, &sig);
+    struct revent *event = hashmap_get_value(r->reacter_events, &signal->eventid);
     event->reason = REVENT_READY;
     return event;
 }
@@ -329,6 +331,7 @@ static struct revent *_deal_file_event(reacter_t r, int fd)
         struct _h_timer *timer = (struct _h_timer*)minheap_del(r->time_heap, &htimer);
         free(timer);
     }
+    repoll_remove_file(r->epfd, fd);
     free(file);
     return event;
 }
@@ -359,7 +362,7 @@ int reacter_run(reacter_t r)
         mtime = 0;
         struct revent *event;
         while (minheap_len(r->time_heap) > 0 && mtime <= 0) {
-            timer = (struct _h_timer*)minheap_pop(r->time_heap);
+            timer = (struct _h_timer*)minheap_top(r->time_heap);
             mtime = get_interval_time(timer->absolute_mtime);
             if (mtime <= 0) {
                 timer = (struct _h_timer*)minheap_pop(r->time_heap);
@@ -408,10 +411,12 @@ int reacter_run(reacter_t r)
                     break;
             }
             event = list_del_at_head(r->activity_events);
-            free(event);
+            if (!hashmap_is_in(r->reacter_events, &event->eventid))
+                free(event);
         }
         list_iter_destroy(&it);
     } while (r->loop);
+    free(evs);
 }
 
 void reacter_stop(reacter_t r)
@@ -498,4 +503,6 @@ void reacter_destroy(reacter_t *r)
         free(event);
     }
     list_destroy(&reacter->activity_events);
+    
+    free(reacter);
 }

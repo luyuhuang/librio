@@ -107,6 +107,8 @@ void *list_del_at_head(list_t list)
 {
     if (!list)
         return NULL;
+    if (!list->head)
+        return NULL;
     struct list_node *p = list->head;
     list->head = list->head->next;
     void *data = p->data;
@@ -120,6 +122,8 @@ void *list_del_at_head(list_t list)
 void *list_del_at_tail(list_t list)
 {
     if (!list)
+        return NULL;
+    if (!list->tail)
         return NULL;
     if (list->len == 1)
         return list_del_at_head(list);

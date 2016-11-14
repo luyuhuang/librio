@@ -47,6 +47,8 @@ static int _minheap_adjust_down(minheap_t heap, int hole)
 {
     if (!heap || hole < 0)
         return -1;
+    if (heap->len == 0)
+        return 0;
 
     void *tmp = heap->heap_array[hole];
     int child = 0;
