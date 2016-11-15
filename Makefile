@@ -3,7 +3,7 @@
 CC= gcc -std=gnu99
 CFLAGS= -O2 -Wall -fPIC
 
-AR= ar
+AR= ar rcu
 RANLIB= ranlib
 
 RIO_SO= librio.so
@@ -12,8 +12,9 @@ RIO_O= comm.o reacter.o reacter_event.o reacter_epoll.o \
 	   list.o minheap.o hashmap.o
 RIO_INC= include/rio.h
 
-INSTALL_SO= /usr/local/lib
-INSTALL_INC= /usr/local/include
+INSTALL_SO= /usr/local/lib64/librio.so
+INSTALL_A= /usr/local/lib64/librio.a
+INSTALL_INC= /usr/local/include/rio.h
 
 all: $(RIO_SO) $(RIO_A)
 
@@ -37,8 +38,14 @@ clean:
 
 install:
 	install -p -m 0755 $(RIO_SO) $(INSTALL_SO)
+	install -p -m 0644 $(RIO_A) $(INSTALL_A)
 	install -p -m 0644 $(RIO_INC) $(INSTALL_INC)
+	ldconfig
 
 uninstall:
+	rm $(INSTALL_SO)
+	rm $(INSTALL_A)
+	rm $(INSTALL_INC)
+
 
 .PHONY: all clean install uninstall

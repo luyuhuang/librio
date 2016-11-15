@@ -290,7 +290,9 @@ static int _get_signal_by_read_pipefd(int pipefd)
     uint8_t buffer[16];
     int ret = thorough_read(pipefd, buffer, 16);
     assert(ret == sizeof(int));
-    return *(int*)buffer;
+    
+    int *psig = (int*)buffer;
+    return *psig;
 }
 
 static struct revent *_deal_overtime_event(reacter_t r, struct _h_timer *timer)
@@ -408,6 +410,8 @@ int reacter_run(reacter_t r)
                     revent_on_signal(event);
                     break;
                 default:
+                    fprintf(stderr, "Bad event type\n");
+                    return -1;
                     break;
             }
             event = list_del_at_head(r->activity_events);
@@ -417,6 +421,7 @@ int reacter_run(reacter_t r)
         list_iter_destroy(&it);
     } while (r->loop);
     free(evs);
+    return 0;
 }
 
 void reacter_stop(reacter_t r)

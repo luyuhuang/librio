@@ -23,6 +23,3 @@ int32_t get_interval_time(int64_t mtime);
 
 ssize_t thorough_read(int fd, uint8_t *buffer, int max_size);
 ssize_t thorough_write(int fd, uint8_t *buffer, int len);
-
-int ip_to_sockaddr(const char *ip, int port, struct sockaddr_in *addr);
-const char *sockaddr_to_ip(struct sockaddr_in *addr);

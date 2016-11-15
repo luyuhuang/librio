@@ -82,14 +82,3 @@ ssize_t thorough_write(int fd, uint8_t *buffer, int len)
 
     return ret;
 }
-
-int ip_to_sockaddr(const char *ip, int port, struct sockaddr_in *addr)
-{
-    addr->sin_family = PF_INET;
-    int ret = inet_pton(PF_INET, ip, &addr->sin_addr);
-}
-
-const char *sockaddr_to_ip(struct sockaddr_in *addr)
-{
-    
-}

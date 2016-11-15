@@ -43,7 +43,7 @@ int _h_timer_equal(void *timer1, void *timer2)
     struct _h_timer *t1 = (struct _h_timer*)timer1;
     struct _h_timer *t2 = (struct _h_timer*)timer2;
    
-    return t1->eventid == t1->eventid;
+    return t1->eventid == t2->eventid;
 }
 
 int _l_revent_equal(void *event1, void *event2)
