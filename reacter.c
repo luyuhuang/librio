@@ -23,7 +23,8 @@ static void _sighandler(int sig) {
     int save_errno = errno;
     
     int msg = sig;
-    write(_pipefd[1], &msg, sizeof(int));
+    int ret = write(_pipefd[1], &msg, sizeof(int));
+    assert(ret == 4);
 
     errno = save_errno;
 }
@@ -459,7 +460,9 @@ reacter_t reacter_create_for_all(
     reacter->max_events = DFL_MAX_EVENTS;
     reacter->max_buffer_size = DFL_MAX_BUFFER_SIZE;
     
-    pipe(_pipefd);
+    if (pipe(_pipefd) < 0) {
+        return NULL;
+    }
     set_nonblocking(_pipefd[0]);
     repoll_add_read_file(reacter->epfd, _pipefd[0], FALSE);
 

@@ -57,8 +57,8 @@ int reacter_run(reacter_t r);
 void reacter_stop(reacter_t r);
 reacter_t reacter_create();
 reacter_t reacter_create_for_all(
-    int max_events;
-    int max_buffer_size;
+    int max_events,
+    int max_buffer_size
 );
 void reacter_destroy(reacter_t *r);
 

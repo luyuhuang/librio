@@ -37,7 +37,7 @@ static int on_read(struct rfile *file, void *buffer, ssize_t len, void *data)
 
 int main()
 {
-    printf("PID:%ld\n", getpid());
+    printf("PID:%d\n", getpid());
     reacter_t r = reacter_create();  
     struct rtimer timer;
     timer.mtime = 1000;

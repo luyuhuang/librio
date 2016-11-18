@@ -10,11 +10,11 @@ RIO_SO= librio.so
 RIO_A= librio.a
 RIO_O= comm.o reacter.o reacter_event.o reacter_epoll.o \
 	   list.o minheap.o hashmap.o
-RIO_INC= include/rio.h
+RIO_H= rio.h
 
-INSTALL_SO= /usr/local/lib64/librio.so
-INSTALL_A= /usr/local/lib64/librio.a
-INSTALL_INC= /usr/local/include/rio.h
+INSTALL_SO= /usr/local/lib
+INSTALL_A= /usr/local/lib
+INSTALL_H= /usr/local/include
 
 all: $(RIO_SO) $(RIO_A)
 
@@ -39,13 +39,13 @@ clean:
 install:
 	install -p -m 0755 $(RIO_SO) $(INSTALL_SO)
 	install -p -m 0644 $(RIO_A) $(INSTALL_A)
-	install -p -m 0644 $(RIO_INC) $(INSTALL_INC)
+	cd include && install -p -m 0644 $(RIO_H) $(INSTALL_H)
 	ldconfig
 
 uninstall:
-	rm $(INSTALL_SO)
-	rm $(INSTALL_A)
-	rm $(INSTALL_INC)
+	cd $(INSTALL_SO) && rm $(RIO_SO)
+	cd $(INSTALL_A) && rm $(RIO_A)
+	cd $(INSTALL_H) && rm $(RIO_H)
 
 
 .PHONY: all clean install uninstall
