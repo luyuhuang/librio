@@ -1,9 +1,10 @@
 #librio
-High performance reacter IO Library
+The IO framework based on reactor model
 
 ###build
 ```
 make
+make test
 [sudo] make install
 ```
 

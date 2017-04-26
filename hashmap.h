@@ -10,11 +10,11 @@
 #include "list.h"
 
 #define HASHMAP_INIT_CAPA       1024
-#define HASHMAP_INIT_FACTOR     0.75f
+#define HASHMAP_INIT_FACTOR     0.5f
 
 /*return a hash code of key*/
 typedef int (*hashmap_hs)(void*);
-/*if arg1 == arg2, return 1(true) or return 2(false)*/
+/*if arg1 == arg2, return 1(true) or return 0(false)*/
 typedef int (*hashmap_eq)(void*, void*);
 
 struct hashmap_pair {
