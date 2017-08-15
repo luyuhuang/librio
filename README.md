@@ -1,12 +1,12 @@
-#librio
+# librio
 The IO framework based on reactor model
 
-###build
-```
+### build
+```bash
 make
 make test
 [sudo] make install
 ```
 
-###notice
+### notice
 Only support Linux now.
