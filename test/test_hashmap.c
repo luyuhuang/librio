@@ -5,17 +5,16 @@
 
 #define TEST_ARRAY_SIZE 100000
 
-int *g_array = NULL;
 hashmap_t g_map = NULL;
 
-static int _hs(void *data)
+static int64_t _hs(basic_value_t data)
 {
-    return *(int*)data;
+    return BASIC2L(data);
 }
 
-static int _eq(void *data1, void *data2)
+static bool _eq(basic_value_t data1, basic_value_t data2)
 {
-    return *(int*)data1 == *(int*)data2;
+    return BASIC2L(data1) == BASIC2L(data2);
 }
 
 
@@ -26,8 +25,9 @@ static int _test_insert_into_hashmap()
 
     clock_t t1 = clock();
     for (int i = 0; i < TEST_ARRAY_SIZE; i++) {
-        index = rand() % TEST_ARRAY_SIZE;
-        hashmap_add(g_map, g_array + index, g_array + index);
+        int key = rand();
+        int value = rand();
+        hashmap_add(g_map, L2BASIC(key), L2BASIC(value));
     }
     clock_t t2 = clock();
 
@@ -43,8 +43,8 @@ static int _test_find_from_hashmap()
 
     clock_t t1 = clock();
     for (int i = 0; i < TEST_ARRAY_SIZE; i++) {
-        index = rand() % TEST_ARRAY_SIZE;
-        hashmap_get_value(g_map, g_array + index);
+        int key = rand();
+        hashmap_get_value(g_map, L2BASIC(key));
     }
     clock_t t2 = clock();
 
@@ -55,15 +55,11 @@ static int _test_find_from_hashmap()
 
 static void _init_env()
 {
-    g_array = calloc(TEST_ARRAY_SIZE, sizeof(int));
-    for (int i = 0; i < TEST_ARRAY_SIZE; i++)
-        g_array[i] = i;
-    g_map = hashmap_create(_hs, _eq);
+    g_map = hashmap_create_for_all(_hs, _eq, 200001, 0.5f);
 }
 
 static void _free_env()
 {
-    free(g_array);
     hashmap_destroy(&g_map);
 }
 
@@ -72,9 +68,9 @@ int main()
     _init_env();
 
     _test_insert_into_hashmap();
-    printf("test insert into hashmap: OK\n");
+    //printf("test insert into hashmap: OK\n");
     _test_find_from_hashmap();
-    printf("test find from hashmap: OK\n");
+    //printf("test find from hashmap: OK\n");
 
     _free_env();
     return 0;

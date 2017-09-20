@@ -13,9 +13,9 @@ hashmap_t hashmap_create(hashmap_hs hs, hashmap_eq eq)
     return hashmap_create_for_all(hs, eq, HASHMAP_INIT_CAPA, HASHMAP_INIT_FACTOR);
 }
 
-static int _is_pair_equal(void *pair1, void *pair2)
+static bool _is_pair_equal(basic_value_t pair1, basic_value_t pair2)
 {
-    return pair1 == pair2;
+    return BASIC2P(pair1, void*) == BASIC2P(pair2, void*);
 }
 
 hashmap_t hashmap_create_for_all(hashmap_hs hs, hashmap_eq eq, size_t init_capacity, double init_factor)
@@ -46,7 +46,7 @@ void hashmap_destroy(hashmap_t *map)
     for (int i = 0; i < (*map)->capacity; i++) {
         list_iter_t it = list_iter_create((*map)->lists[i]);
         struct hashmap_pair *p;
-        while ((p = list_iter_next(it)) != NULL) {
+        while ((p = BASIC2P(list_iter_next(it), struct hashmap_pair*)) != NULL) {
             free(p);
         }
         list_iter_destroy(&it);
@@ -57,11 +57,11 @@ void hashmap_destroy(hashmap_t *map)
     *map = NULL;
 }
 
-static struct hashmap_pair *_hashmap_list_find(hashmap_t map, list_t list, void *key)
+static struct hashmap_pair *_hashmap_list_find(hashmap_t map, list_t list, basic_value_t key)
 {
     list_iter_t it = list_iter_create(list);
     struct hashmap_pair *p, *ret = NULL;
-    while ((p = list_iter_next(it)) != NULL) {
+    while ((p = BASIC2P(list_iter_next(it), struct hashmap_pair*)) != NULL) {
         if (map->eq(p->key, key)) {
             ret = p;
             break;
@@ -88,7 +88,7 @@ static int _hashmap_resize(hashmap_t map)
         hash_code %= new_capacity;
         if (hash_code < 0)
             hash_code += new_capacity;
-        list_insert_at_tail(new_lists[hash_code], p);
+        list_insert_at_tail(new_lists[hash_code], P2BASIC(p));
     }
     hashmap_iter_destroy(&it);
     for (int i = 0; i < map->capacity; i++)
@@ -99,7 +99,7 @@ static int _hashmap_resize(hashmap_t map)
     return 0;
 }
 
-int hashmap_add(hashmap_t map, void *key, void *value)
+int hashmap_add(hashmap_t map, basic_value_t key, basic_value_t value)
 {
     if (!map)
         return -1;
@@ -114,7 +114,7 @@ int hashmap_add(hashmap_t map, void *key, void *value)
         assert(pair != NULL);
         pair->key = key;
         pair->value = value;
-        list_insert_at_tail(map->lists[hash_code], pair);
+        list_insert_at_tail(map->lists[hash_code], P2BASIC(pair));
         map->len++;
         if (map->len > map->capacity * map->resize_factor) {
             _hashmap_resize(map);
@@ -125,10 +125,10 @@ int hashmap_add(hashmap_t map, void *key, void *value)
     return 0;
 }
 
-void *hashmap_get_value(hashmap_t map, void *key)
+basic_value_t hashmap_get_value(hashmap_t map, basic_value_t key)
 {
     if (!map)
-        return NULL;
+        return BASIC_NULL;
 
     int hash_code = map->hs(key);
     hash_code %= map->capacity;
@@ -136,12 +136,12 @@ void *hashmap_get_value(hashmap_t map, void *key)
         hash_code += map->capacity;
     struct hashmap_pair *pair = _hashmap_list_find(map, map->lists[hash_code], key);
     if (pair == NULL)
-        return NULL;
+        return BASIC_NULL;
     else
         return pair->value;
 }
 
-int hashmap_is_in(hashmap_t map, void *key)
+int hashmap_is_in(hashmap_t map, basic_value_t key)
 {
     if (!map)
         return -1;
@@ -154,10 +154,10 @@ int hashmap_is_in(hashmap_t map, void *key)
     return pair != NULL;
 }
 
-void *hashmap_del(hashmap_t map, void *key)
+basic_value_t hashmap_del(hashmap_t map, basic_value_t key)
 {
     if (!map)
-        return NULL;
+        return BASIC_NULL;
 
     int hash_code = map->hs(key);
     hash_code %= map->capacity;
@@ -166,9 +166,9 @@ void *hashmap_del(hashmap_t map, void *key)
     
     list_iter_t it = list_iter_create(map->lists[hash_code]);
     struct hashmap_pair *p;
-    void *value = NULL;
+    basic_value_t value = BASIC_NULL;
     int i = 0;
-    while ((p = list_iter_next(it)) != NULL) {
+    while ((p = BASIC2P(list_iter_next(it), struct hashmap_pair*)) != NULL) {
         if (map->eq(p->key, key)) {
             value = p->value;
             list_del(map->lists[hash_code], i);
@@ -227,7 +227,7 @@ struct hashmap_pair *hashmap_iter_next(hashmap_iter_t iter)
             return NULL;
         iter->p_node = iter->map->lists[iter->index]->head;
     }
-    struct hashmap_pair *p = iter->p_node->data;
+    struct hashmap_pair *p = BASIC2P(iter->p_node->data, struct hashmap_pair*);
     iter->p_node = iter->p_node->next;
     iter->count++;
     return p;

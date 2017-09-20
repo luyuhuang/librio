@@ -36,7 +36,7 @@ void list_destroy(list_t *list)
     *list = NULL;
 }
 
-int list_insert_at_head(list_t list, void *data)
+int list_insert_at_head(list_t list, basic_value_t data)
 {
     if (!list)
         return 0;
@@ -57,7 +57,7 @@ int list_insert_at_head(list_t list, void *data)
     return 0;
 }
 
-int list_insert_at_tail(list_t list, void *data)
+int list_insert_at_tail(list_t list, basic_value_t data)
 {
     if (!list)
         return 0;
@@ -78,7 +78,7 @@ int list_insert_at_tail(list_t list, void *data)
     return 0;
 }
 
-int list_insert(list_t list, void *data, int index)
+int list_insert(list_t list, basic_value_t data, int index)
 {
     if (!list || index < 0)
         return -1;
@@ -103,15 +103,15 @@ int list_insert(list_t list, void *data, int index)
     }
 }
 
-void *list_del_at_head(list_t list)
+basic_value_t list_del_at_head(list_t list)
 {
     if (!list)
-        return NULL;
+        return BASIC_NULL;
     if (!list->head)
-        return NULL;
+        return BASIC_NULL;
     struct list_node *p = list->head;
     list->head = list->head->next;
-    void *data = p->data;
+    basic_value_t data = p->data;
     free(p);
     list->len--;
     if (list->len == 0)
@@ -119,19 +119,19 @@ void *list_del_at_head(list_t list)
     return data;
 }
 
-void *list_del_at_tail(list_t list)
+basic_value_t list_del_at_tail(list_t list)
 {
     if (!list)
-        return NULL;
+        return BASIC_NULL;
     if (!list->tail)
-        return NULL;
+        return BASIC_NULL;
     if (list->len == 1)
         return list_del_at_head(list);
 
     struct list_node *p = list->head;
     while (p->next != list->tail)
         p = p->next;
-    void *data = list->tail->data;
+    basic_value_t data = list->tail->data;
     free(list->tail);
     p->next = NULL;
     list->tail = p;
@@ -139,10 +139,10 @@ void *list_del_at_tail(list_t list)
     return data;
 }
 
-void *list_del(list_t list, int index)
+basic_value_t list_del(list_t list, int index)
 {
     if (!list || index < 0)
-        return NULL;
+        return BASIC_NULL;
 
     if (index == 0)
         return list_del_at_head(list);
@@ -154,31 +154,31 @@ void *list_del(list_t list, int index)
         p = p->next;
     }
     struct list_node *node = p->next;
-    void *data = node->data;
+    basic_value_t data = node->data;
     p->next = p->next->next;
     free(node);
     list->len--;
     return data;
 }
 
-void *list_get_head(list_t list)
+basic_value_t list_get_head(list_t list)
 {
     if (!list)
-        return NULL;
+        return BASIC_NULL;
     return list->head->data;
 }
 
-void *list_get_tail(list_t list)
+basic_value_t list_get_tail(list_t list)
 {
     if (!list)
-        return NULL;
+        return BASIC_NULL;
     return list->tail->data;
 }
 
-void *list_get(list_t list, int index)
+basic_value_t list_get(list_t list, int index)
 {
     if (!list || index < 0)
-        return NULL;
+        return BASIC_NULL;
     if (index == 0)
         return list_get_head(list);
     if (index == list->len-1)
@@ -190,7 +190,7 @@ void *list_get(list_t list, int index)
     return p->data;
 }
 
-int list_find(list_t list, void *data)
+int list_find(list_t list, basic_value_t data)
 {
     struct list_node *p = list->head;
     int i = 0;
@@ -203,7 +203,7 @@ int list_find(list_t list, void *data)
     return -1;
 }
 
-int list_is_in(list_t list, void *data)
+int list_is_in(list_t list, basic_value_t data)
 {
     return list_find(list, data) == -1 ? 0 : 1;
 }
@@ -233,11 +233,11 @@ void list_iter_destroy(list_iter_t *it)
     *it = NULL;
 }
 
-void *list_iter_next(list_iter_t it)
+basic_value_t list_iter_next(list_iter_t it)
 {
     if (it->p_node == NULL)
-        return NULL;
-    void *data = it->p_node->data;
+        return BASIC_NULL;
+    basic_value_t data = it->p_node->data;
     it->p_node = it->p_node->next;
     it->count++;
     return data;
