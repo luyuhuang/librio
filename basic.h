@@ -14,11 +14,13 @@ typedef union basic_value {
 #define BASIC2L(_b) ((_b).l)
 #define BASIC2U(_b) ((_b).u)
 #define BASIC2D(_b) ((_b).d)
+#define BASIC2S(_b) ((_b).s)
 #define BASIC2P(_b, _t) ((_t)((_b).p))
 
 #define L2BASIC(_l) ({basic_value_t v; v.l = _l; v;})
 #define U2BASIC(_u) ({basic_value_t v; v.u = _u; v;})
 #define D2BASIC(_d) ({basic_value_t v; v.d = _d; v;})
+#define S2BASIC(_s) ({basic_value_t v; v.s = _s; v;})
 #define P2BASIC(_p) ({basic_value_t v; v.p = (void*)_p; v;})
 
 static const basic_value_t _basic_value_null = {0};

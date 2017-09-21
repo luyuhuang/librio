@@ -49,7 +49,7 @@ static int _test_list_insert()
 
 static int _test_list_erase()
 {
-    struct node *n, *n1;
+    struct node *n;
 
     LIST_ERASE(&g_list, g_list.head);
     LIST_ERASE(&g_list, g_list.tail);

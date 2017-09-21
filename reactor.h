@@ -8,7 +8,8 @@
 
 #include "reactor_event.h"
 #include "minheap.h"
-#include "list.h"
+//#include "list.h"
+#include "macro_list.h"
 #include "hashmap.h"
 
 #define DFL_MAX_EVENTS 2048
@@ -23,6 +24,7 @@
 #define TRUE            1
 #define FALSE           0
 
+typedef SLIST(struct revent) activity_list_t;
 struct reactor_manager {
     int epfd;
 
@@ -32,7 +34,8 @@ struct reactor_manager {
     hashmap_t timer_events;
 
     hashmap_t reactor_events;
-    list_t activity_events;
+    //list_t activity_events;
+    activity_list_t activity_events;
 
     int loop;
     uint64_t next_eventid;

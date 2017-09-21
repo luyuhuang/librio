@@ -18,7 +18,7 @@ struct list_node {
 };
 
 /*if arg1 == arg2, return 1(true) or return 0(false)*/
-typedef bool (*list_eq)(basic_valut_t, basic_valut_t);
+typedef bool (*list_eq)(basic_value_t, basic_value_t);
 
 struct list {
     struct list_node *head;
@@ -40,7 +40,7 @@ list_t list_create(list_eq eq);
 void list_destroy(list_t *list);
 
 int list_insert_at_tail(list_t list, basic_value_t data);
-int list_insert_at_head(list_t list, basic_valut_t data);
+int list_insert_at_head(list_t list, basic_value_t data);
 int list_insert(list_t list, basic_value_t data, int index);
 
 basic_value_t list_del_at_tail(list_t list);

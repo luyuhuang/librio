@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "list.h"
+//#include "list.h"
+#include "macro_list.h"
 #include "basic.h"
 
 #define HASHMAP_INIT_CAPA       1024
@@ -27,8 +28,11 @@ struct hashmap_pair {
     //void *value;
     basic_value_t key;
     basic_value_t value;
+
+    struct hashmap_pair *__next__;
 };
 
+typedef SLIST(struct hashmap_pair) hm_list_t;
 struct hashmap {
     size_t len;
     size_t capacity;
@@ -37,13 +41,14 @@ struct hashmap {
     hashmap_hs hs;
     hashmap_eq eq;
 
-    list_t *lists;
+    hm_list_t *lists;
 };
 
 struct hashmap_iter {
     size_t index;
     struct hashmap *map;
-    struct list_node *p_node;
+    //struct list_node *p_node;
+    struct hashmap_pair *p_node;
     size_t count;
 };
 
@@ -52,7 +57,7 @@ typedef struct hashmap_iter *hashmap_iter_t;
 
 hashmap_t hashmap_create(hashmap_hs hs, hashmap_eq eq);
 hashmap_t hashmap_create_for_all(hashmap_hs hs, hashmap_eq eq, size_t init_capacity, double init_factor);
-void hashmap_destroy(hashmap_t *map);
+void hashmap_destroy(hashmap_t *pmap);
 
 int hashmap_is_in(hashmap_t map, basic_value_t key);
 int hashmap_add(hashmap_t map, basic_value_t key, basic_value_t value);

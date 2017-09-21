@@ -144,4 +144,11 @@
         (slist)->head = (slist)->head->__next__;    \
     } while (0)
 
+#define SLIST_ERASE_AFTER(slist, node)                  \
+    do {                                                \
+        (node)->__next__ = (node)->__next__->__next__;  \
+        if ((node)->__next__ == NULL)                   \
+            (slist)->tail = (node);                     \
+    } while (0)
+
 #endif //_MACRO_LIST_H_

@@ -10,34 +10,39 @@
 #include <stdlib.h>
 #include <assert.h>
 
-int _m_int_hash(void *key)
+int64_t _m_int_hash(basic_value_t key)
 {
-    return *(int*)key;
+    //return *(int*)key;
+    return BASIC2L(key);
 }
 
-int _m_int_equal(void *key1, void *key2)
+bool _m_int_equal(basic_value_t key1, basic_value_t key2)
 {
-    return *(int*)key1 == *(int*)key2;
+    //return *(int*)key1 == *(int*)key2;
+    return BASIC2L(key1) == BASIC2L(key2);
 }
 
-int _m_uint64_hash(void *key)
+int64_t _m_uint64_hash(basic_value_t key)
 {
-    return *(uint64_t*)key;
+    //return *(uint64_t*)key;
+    return BASIC2U(key);
 }
 
-int _m_uint64_equal(void *key1, void *key2)
+bool _m_uint64_equal(basic_value_t key1, basic_value_t key2)
 {
-    return *(uint64_t*)key1 == *(uint64_t*)key2;
+    //return *(uint64_t*)key1 == *(uint64_t*)key2;
+    return BASIC2U(key1) == BASIC2U(key2);
 }
 
-int _h_timer_little(void *timer1, void *timer2)
+bool _h_timer_little(basic_value_t timer1, basic_value_t timer2)
 {
-    struct _h_timer *t1 = (struct _h_timer*)timer1;
-    struct _h_timer *t2 = (struct _h_timer*)timer2;
+    struct _h_timer *t1 = BASIC2P(timer1, struct _h_timer*);
+    struct _h_timer *t2 = BASIC2P(timer2, struct _h_timer*);
 
     return t1->absolute_mtime < t2->absolute_mtime;
 }
 
+/*
 int _h_timer_equal(void *timer1, void *timer2)
 {
     struct _h_timer *t1 = (struct _h_timer*)timer1;
@@ -45,11 +50,12 @@ int _h_timer_equal(void *timer1, void *timer2)
    
     return t1->eventid == t2->eventid;
 }
+*/
 
-int _l_revent_equal(void *event1, void *event2)
+bool _l_revent_equal(basic_value_t event1, basic_value_t event2)
 {
-    struct revent *e1 = (struct revent*)event1;
-    struct revent *e2 = (struct revent*)event2;
+    struct revent *e1 = BASIC2P(event1, struct revent*);
+    struct revent *e2 = BASIC2P(event2, struct revent*);
 
     return e1->eventid == e2->eventid;
 }

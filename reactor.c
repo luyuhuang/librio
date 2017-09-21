@@ -31,7 +31,7 @@ static void _sighandler(int sig) {
 
 int reactor_asyn_read(reactor_t r, struct rfile *file, int32_t mtime, read_cb callback, void *data)
 {
-    if (hashmap_is_in(r->file_events, &file->fd))
+    if (hashmap_is_in(r->file_events, L2BASIC(file->fd)))
         return -1;
 
     struct revent *event = (struct revent*)calloc(1, sizeof(struct revent));
@@ -43,19 +43,19 @@ int reactor_asyn_read(reactor_t r, struct rfile *file, int32_t mtime, read_cb ca
     event->callback = (void*)callback;
     event->data = data;
 
-    hashmap_add(r->reactor_events, &event->eventid, event);
+    hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
     struct _m_file *new_file = (struct _m_file*)calloc(1, sizeof(struct _m_file));
     new_file->eventid = event->eventid;
     new_file->fd = file->fd;
 
-    hashmap_add(r->file_events, &new_file->fd, new_file);
+    hashmap_add(r->file_events, L2BASIC(new_file->fd), P2BASIC(new_file));
 
     if (mtime >= 0) {
         struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
         new_timer->eventid = event->eventid;
         new_timer->absolute_mtime = get_absolute_time(mtime);
-        minheap_add(r->time_heap, new_timer);
+        minheap_add(r->time_heap, P2BASIC(new_timer));
     }
 
     int ret = repoll_add_read_file(r->epfd, file->fd, TRUE);
@@ -68,7 +68,7 @@ int reactor_asyn_read(reactor_t r, struct rfile *file, int32_t mtime, read_cb ca
 
 int reactor_asyn_write(reactor_t r, struct rfile *file, void *buffer, size_t len, int32_t mtime, write_cb callback, void *data)
 {
-    if (hashmap_is_in(r->file_events, &file->fd))
+    if (hashmap_is_in(r->file_events, L2BASIC(file->fd)))
         return -1;
 
     struct revent *event = (struct revent*)calloc(1, sizeof(struct revent));
@@ -82,19 +82,19 @@ int reactor_asyn_write(reactor_t r, struct rfile *file, void *buffer, size_t len
     event->callback = (void*)callback;
     event->data = data;
 
-    hashmap_add(r->reactor_events, &event->eventid, event);
+    hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
     struct _m_file *new_file = (struct _m_file*)calloc(1, sizeof(struct _m_file));
     new_file->eventid = event->eventid;
     new_file->fd = file->fd;
 
-    hashmap_add(r->file_events, &new_file->fd, new_file);
+    hashmap_add(r->file_events, L2BASIC(new_file->fd), P2BASIC(new_file));
 
     if (mtime >= 0) {
         struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
         new_timer->eventid = event->eventid;
         new_timer->absolute_mtime = get_absolute_time(mtime);
-        minheap_add(r->time_heap, new_timer);
+        minheap_add(r->time_heap, P2BASIC(new_timer));
     }
     
     int ret = repoll_add_write_file(r->epfd, file->fd, TRUE);
@@ -106,7 +106,7 @@ int reactor_asyn_write(reactor_t r, struct rfile *file, void *buffer, size_t len
 
 int reactor_asyn_accept(reactor_t r, struct rfile *file, int32_t mtime, accept_cb callback, void *data)
 {
-    if (hashmap_is_in(r->file_events, &file->fd))
+    if (hashmap_is_in(r->file_events, L2BASIC(file->fd)))
         return -1;
 
     struct revent *event = (struct revent*)calloc(1, sizeof(struct revent));
@@ -118,19 +118,19 @@ int reactor_asyn_accept(reactor_t r, struct rfile *file, int32_t mtime, accept_c
     event->callback = (void*)callback;
     event->data = data;
 
-    hashmap_add(r->reactor_events, &event->eventid, event);
+    hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
     struct _m_file *new_file = (struct _m_file*)calloc(1, sizeof(struct _m_file));
     new_file->eventid = event->eventid;
     new_file->fd = file->fd;
 
-    hashmap_add(r->file_events, &new_file->fd, new_file);
+    hashmap_add(r->file_events, L2BASIC(new_file->fd), P2BASIC(new_file));
 
     if (mtime >= 0) {
         struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
         new_timer->eventid = event->eventid;
         new_timer->absolute_mtime = get_absolute_time(mtime);
-        minheap_add(r->time_heap, new_timer);
+        minheap_add(r->time_heap, P2BASIC(new_timer));
     }
     
     int ret = repoll_add_read_file(r->epfd, file->fd, TRUE);
@@ -158,19 +158,19 @@ int reactor_asyn_connect(
         event->callback = (void*)callback;
         event->data = data;
 
-        hashmap_add(r->reactor_events, &event->eventid, event);
+        hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
         struct _m_file *new_file = (struct _m_file*)calloc(1, sizeof(struct _m_file));
         new_file->eventid = event->eventid;
         new_file->fd = file->fd;
 
-        hashmap_add(r->file_events, &new_file->fd, new_file);
+        hashmap_add(r->file_events, L2BASIC(new_file->fd), P2BASIC(new_file));
 
         if (mtime >= 0) {
             struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
             new_timer->eventid = event->eventid;
             new_timer->absolute_mtime = get_absolute_time(mtime);
-            minheap_add(r->time_heap, new_timer);
+            minheap_add(r->time_heap, P2BASIC(new_timer));
         }
 
         ret = repoll_add_write_file(r->epfd, file->fd, TRUE);
@@ -185,7 +185,7 @@ int reactor_asyn_connect(
 
 int reactor_add_timer(reactor_t r, struct rtimer *timer, timer_cb callback, void *data)
 {
-    if (hashmap_is_in(r->timer_events, &timer->timer_id))
+    if (hashmap_is_in(r->timer_events, L2BASIC(timer->timer_id)))
         return -1;
 
     struct revent *event = (struct revent*)calloc(1, sizeof(struct revent));
@@ -198,31 +198,31 @@ int reactor_add_timer(reactor_t r, struct rtimer *timer, timer_cb callback, void
     event->callback = (void*)callback;
     event->data = data;
 
-    hashmap_add(r->reactor_events, &event->eventid, event);
+    hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
     struct _m_timer *mtimer = (struct _m_timer*)calloc(1, sizeof(struct _m_timer));
     mtimer->eventid = event->eventid;
     mtimer->timer_id = timer->timer_id;
 
-    hashmap_add(r->timer_events, &mtimer->timer_id, mtimer);
+    hashmap_add(r->timer_events, L2BASIC(mtimer->timer_id), P2BASIC(mtimer));
 
     struct _h_timer *new_timer = (struct _h_timer*)calloc(1, sizeof(struct _h_timer));
     new_timer->eventid = event->eventid;
     new_timer->absolute_mtime = get_absolute_time(timer->mtime);
 
-    return minheap_add(r->time_heap, new_timer);
+    return minheap_add(r->time_heap, P2BASIC(new_timer));
 }
 
 int reactor_del_timer(reactor_t r, int timer_id)
 {
-    if (!hashmap_is_in(r->timer_events, &timer_id))
+    if (!hashmap_is_in(r->timer_events, L2BASIC(timer_id)))
         return -1;
 
-    struct _m_timer *timer = (struct _m_timer*)hashmap_del(r->timer_events, &timer_id);
-    struct revent *event = (struct revent*)hashmap_del(r->reactor_events, &timer->eventid);
+    struct _m_timer *timer = BASIC2P(hashmap_del(r->timer_events, L2BASIC(timer_id)), struct _m_timer*);
+    struct revent *event = BASIC2P(hashmap_del(r->reactor_events, P2BASIC(timer->eventid)), struct revent*);
     struct _h_timer htimer;
     htimer.eventid = event->eventid;
-    struct _h_timer *ptimer = (struct _h_timer*)minheap_del(r->time_heap, &htimer);
+    struct _h_timer *ptimer = BASIC2P(minheap_del(r->time_heap, P2BASIC(&htimer)), struct _h_timer*);
     free(ptimer);
     free(event);
     free(timer);
@@ -231,7 +231,7 @@ int reactor_del_timer(reactor_t r, int timer_id)
 
 int reactor_add_signal(reactor_t r, struct rsignal *signal, signal_cb callback, void *data)
 {
-    if (hashmap_is_in(r->signal_events, &signal->sig))
+    if (hashmap_is_in(r->signal_events, L2BASIC(signal->sig)))
         return -1;
 
     struct revent *event = (struct revent*)calloc(1, sizeof(struct revent));
@@ -243,13 +243,13 @@ int reactor_add_signal(reactor_t r, struct rsignal *signal, signal_cb callback, 
     event->callback = (void*)callback;
     event->data = data;
 
-    hashmap_add(r->reactor_events, &event->eventid, event);
+    hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
     
     struct _m_signal *new_signal = (struct _m_signal*)calloc(1, sizeof(struct _m_signal));
     new_signal->eventid = event->eventid;
     new_signal->sig = signal->sig;
 
-    hashmap_add(r->signal_events, &new_signal->sig, new_signal);
+    hashmap_add(r->signal_events, L2BASIC(new_signal->sig), P2BASIC(new_signal));
 
     struct sigaction sa;
     bzero(&sa, sizeof(sa));
@@ -266,11 +266,11 @@ int reactor_add_signal(reactor_t r, struct rsignal *signal, signal_cb callback, 
 
 int reactor_del_signal(reactor_t r, int sig)
 {
-    if (!hashmap_is_in(r->signal_events, &signal))
+    if (!hashmap_is_in(r->signal_events, L2BASIC(sig)))
         return -1;
 
-    struct _m_signal *signal = (struct _m_signal*)hashmap_del(r->signal_events, &signal);
-    struct revent *event = (struct revent*)hashmap_del(r->reactor_events, &signal->eventid);
+    struct _m_signal *signal = BASIC2P(hashmap_del(r->signal_events, L2BASIC(sig)), struct _m_signal*);
+    struct revent *event = BASIC2P(hashmap_del(r->reactor_events, U2BASIC(signal->eventid)), struct revent*);
     free(signal);
     free(event);
 
@@ -298,17 +298,17 @@ static int _get_signal_by_read_pipefd(int pipefd)
 
 static struct revent *_deal_overtime_event(reactor_t r, struct _h_timer *timer)
 {
-    struct revent *event = hashmap_del(r->reactor_events, &timer->eventid);
+    struct revent *event = BASIC2P(hashmap_del(r->reactor_events, U2BASIC(timer->eventid)), struct revent*);
     event->reason = REVENT_TIMEOUT;
     if (event->type == REVENT_ACCEPT ||
             event->type == REVENT_READ ||
             event->type == REVENT_WRITE ||
             event->type == REVENT_CONNECT) {
-        struct _m_file *file = hashmap_del(r->file_events, &event->fd);
+        struct _m_file *file = BASIC2P(hashmap_del(r->file_events, L2BASIC(event->fd)), struct _m_file*);
         repoll_remove_file(r->epfd, event->fd);
         free(file);
     } else if (event->type == REVENT_TIMER) {
-        struct _m_timer *timer = hashmap_del(r->timer_events, &event->timer_id);
+        struct _m_timer *timer = BASIC2P(hashmap_del(r->timer_events, L2BASIC(event->timer_id)), struct _m_timer*);
         free(timer);
     }
     return event;
@@ -317,21 +317,21 @@ static struct revent *_deal_overtime_event(reactor_t r, struct _h_timer *timer)
 static struct revent *_deal_signal_event(reactor_t r, int pipefd)
 {
     int sig = _get_signal_by_read_pipefd(pipefd);
-    struct _m_signal *signal = hashmap_get_value(r->signal_events, &sig);
-    struct revent *event = hashmap_get_value(r->reactor_events, &signal->eventid);
+    struct _m_signal *signal = BASIC2P(hashmap_get_value(r->signal_events, L2BASIC(sig)), struct _m_signal*);
+    struct revent *event = BASIC2P(hashmap_get_value(r->reactor_events, U2BASIC(signal->eventid)), struct revent*);
     event->reason = REVENT_READY;
     return event;
 }
 
 static struct revent *_deal_file_event(reactor_t r, int fd)
 {
-    struct _m_file *file = (struct _m_file*)hashmap_del(r->file_events, &fd);
-    struct revent *event = (struct revent*)hashmap_del(r->reactor_events, &file->eventid);
+    struct _m_file *file = BASIC2P(hashmap_del(r->file_events, L2BASIC(fd)), struct _m_file*);
+    struct revent *event = BASIC2P(hashmap_del(r->reactor_events, U2BASIC(file->eventid)), struct revent*);
     event->reason = REVENT_READY;
     if (event->mtime >= 0) {
         struct _h_timer htimer;
         htimer.eventid = event->eventid;
-        struct _h_timer *timer = (struct _h_timer*)minheap_del(r->time_heap, &htimer);
+        struct _h_timer *timer = BASIC2P(minheap_del(r->time_heap, P2BASIC(&htimer)), struct _h_timer*);
         free(timer);
     }
     repoll_remove_file(r->epfd, fd);
@@ -346,7 +346,7 @@ int reactor_run(reactor_t r)
     int32_t mtime;
 
     do {
-        timer = (struct _h_timer*)minheap_top(r->time_heap);
+        timer = BASIC2P(minheap_top(r->time_heap), struct _h_timer*);
         if (timer) {
             mtime = get_interval_time(timer->absolute_mtime);
             mtime = mtime > 0 ? mtime : 0;
@@ -365,12 +365,13 @@ int reactor_run(reactor_t r)
         mtime = 0;
         struct revent *event;
         while (minheap_len(r->time_heap) > 0 && mtime <= 0) {
-            timer = (struct _h_timer*)minheap_top(r->time_heap);
+            timer = BASIC2P(minheap_top(r->time_heap), struct _h_timer*);
             mtime = get_interval_time(timer->absolute_mtime);
             if (mtime <= 0) {
-                timer = (struct _h_timer*)minheap_pop(r->time_heap);
+                timer = BASIC2P(minheap_pop(r->time_heap), struct _h_timer*);
                 event = _deal_overtime_event(r, timer);
-                list_insert_at_tail(r->activity_events, event);
+                //list_insert_at_tail(r->activity_events, event);
+                SLIST_INSERT_AT_TAIL(&r->activity_events, event);
                 free(timer);
             }
         }
@@ -379,18 +380,22 @@ int reactor_run(reactor_t r)
             if (evs[i].repoll_events & REPOLL_IN || evs[i].repoll_events & REPOLL_OUT) {
                 if (evs[i].repoll_fd == _pipefd[0]) {
                     event = _deal_signal_event(r, _pipefd[0]);
-                    list_insert_at_tail(r->activity_events, event);
+                    //list_insert_at_tail(r->activity_events, event);
+                    SLIST_INSERT_AT_TAIL(&r->activity_events, event);
                 } else {
                     event = _deal_file_event(r, evs[i].repoll_fd);
-                    list_insert_at_tail(r->activity_events, event);
+                    //list_insert_at_tail(r->activity_events, event);
+                    SLIST_INSERT_AT_TAIL(&r->activity_events, event);
                 }
             } else {
 
             }
         }
 
-        list_iter_t it = list_iter_create(r->activity_events);
-        while ((event = list_iter_next(it)) != NULL) {
+        //list_iter_t it = list_iter_create(r->activity_events);
+        //while ((event = list_iter_next(it)) != NULL) {
+        event = SLIST_BEGIN(&r->activity_events);
+        while (event != SLIST_END(&r->activity_events)) {
             switch (event->type) {
                 case REVENT_ACCEPT:
                     revent_on_accept(event);
@@ -415,11 +420,15 @@ int reactor_run(reactor_t r)
                     return -1;
                     break;
             }
-            event = list_del_at_head(r->activity_events);
-            if (!hashmap_is_in(r->reactor_events, &event->eventid))
-                free(event);
+
+            //event = list_del_at_head(r->activity_events);
+            struct revent *e = event;
+            event = SLIST_NEXT(event);
+            SLIST_ERASE_HEAD(&r->activity_events);
+            if (!hashmap_is_in(r->reactor_events, U2BASIC(e->eventid)))
+                free(e);
         }
-        list_iter_destroy(&it);
+        //list_iter_destroy(&it);
     } while (r->loop);
     free(evs);
     return 0;
@@ -446,13 +455,14 @@ reactor_t reactor_create_for_all(
     reactor_t reactor = (struct reactor_manager*)calloc(1, sizeof(struct reactor_manager));
     reactor->epfd = repoll_create();
 
-    reactor->time_heap = minheap_create(_h_timer_little, _h_timer_equal);
+    reactor->time_heap = minheap_create(_h_timer_little);
     reactor->file_events = hashmap_create(_m_int_hash, _m_int_equal);
     reactor->signal_events = hashmap_create(_m_int_hash, _m_int_equal);
     reactor->timer_events = hashmap_create(_m_int_hash, _m_int_equal);
 
     reactor->reactor_events = hashmap_create(_m_uint64_hash, _m_uint64_equal);
-    reactor->activity_events = list_create(_l_revent_equal);
+    //reactor->activity_events = list_create(_l_revent_equal);
+    SLIST_INIT(&reactor->activity_events);
 
     reactor->loop = 1;
     reactor->next_eventid = 0;
@@ -474,7 +484,7 @@ void reactor_destroy(reactor_t *r)
     reactor_t reactor = *r;
 
     struct _h_timer *timer;
-    while ((timer = minheap_pop(reactor->time_heap)) != NULL) {
+    while ((timer = BASIC2P(minheap_pop(reactor->time_heap), struct _h_timer*)) != NULL) {
         free(timer);
     }
     minheap_destroy(&reactor->time_heap);
@@ -482,22 +492,25 @@ void reactor_destroy(reactor_t *r)
     struct hashmap_pair *pair;
     hashmap_iter_t mit = hashmap_iter_create(reactor->file_events);
     while ((pair = hashmap_iter_next(mit)) != NULL) {
-        free(pair->value);
+        free(BASIC2P(pair->value, void*));
     }
     hashmap_iter_destroy(&mit);
     mit = hashmap_iter_create(reactor->signal_events);
     while ((pair = hashmap_iter_next(mit)) != NULL) {
-        free(pair->value);
+        free(BASIC2P(pair->value, void*));
+        //free(pair->value);
     }
     hashmap_iter_destroy(&mit);
     mit = hashmap_iter_create(reactor->timer_events);
     while ((pair = hashmap_iter_next(mit)) != NULL) {
-        free(pair->value);
+        free(BASIC2P(pair->value, void*));
+        //free(pair->value);
     }
     hashmap_iter_destroy(&mit);
     mit = hashmap_iter_create(reactor->reactor_events);
     while ((pair = hashmap_iter_next(mit)) != NULL) {
-        free(pair->value);
+        free(BASIC2P(pair->value, void*));
+        //free(pair->value);
     }
     hashmap_iter_destroy(&mit);
 
@@ -506,11 +519,17 @@ void reactor_destroy(reactor_t *r)
     hashmap_destroy(&reactor->timer_events);
     hashmap_destroy(&reactor->reactor_events);
     
-    struct revent *event;
-    while ((event = list_del_at_head(reactor->activity_events)) != NULL) {
-        free(event);
+    struct revent *event = SLIST_BEGIN(&reactor->activity_events);
+    //while ((event = list_del_at_head(reactor->activity_events)) != NULL) {
+    //    free(event);
+    //}
+    //list_destroy(&reactor->activity_events);
+    while (event != SLIST_END(&reactor->activity_events)) {
+        struct revent *e = event;
+        event = SLIST_NEXT(event);
+        free(e);
     }
-    list_destroy(&reactor->activity_events);
     
     free(reactor);
+    *r = NULL;
 }

@@ -9,7 +9,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <sys/time.h>
+#include "basic.h"
 
 typedef struct reactor_manager *reactor_t;
 
@@ -50,8 +52,8 @@ struct _m_timer {
     int timer_id;
 };
 
-int _m_int_hash(void *key);
-int _m_int_equal(void *key1, void *key2);
+int64_t _m_int_hash(basic_value_t key);
+bool _m_int_equal(basic_value_t key1, basic_value_t key2);
 
 enum revent_type {
     REVENT_ACCEPT = 0,
@@ -84,19 +86,21 @@ struct revent {
 
     void *callback;
     void *data;
+
+    struct revent *__next__;
 };
 
-int _m_uint64_hash(void *key);
-int _m_uint64_equal(void *key1, void *key2);
-int _l_revent_equal(void *event1, void *event2);
+int64_t _m_uint64_hash(basic_value_t key);
+bool _m_uint64_equal(basic_value_t key1, basic_value_t key2);
+bool _l_revent_equal(basic_value_t event1, basic_value_t event2);
 
 struct _h_timer {
     uint64_t eventid;
     int64_t absolute_mtime;
 };
 
-int _h_timer_little(void *timer1, void *timer2);
-int _h_timer_equal(void *timer1, void *timer2);
+bool _h_timer_little(basic_value_t timer1, basic_value_t timer2);
+//int _h_timer_equal(void *timer1, void *timer2);
 
 int revent_on_timer(struct revent *event);
 int revent_on_signal(struct revent *event);
