@@ -23,3 +23,24 @@ int32_t get_interval_time(int64_t mtime);
 
 ssize_t thorough_read(int fd, uint8_t *buffer, int max_size);
 ssize_t thorough_write(int fd, uint8_t *buffer, int len);
+
+#ifdef USE_MUTEX
+
+typedef pthread_mutex_t lock_t;
+#define LOCK_INITIALIZER 0
+#define LOCK_INIT(lock) (pthread_mutex_init(lock, NULL))
+#define LOCK(lock) (pthread_mutex_lock(lock))
+#define UNLOCK(lock) (pthread_mutex_unlock(lock))
+#define LOCK_DESTROY(lock) (pthread_mutex_destroy(lock))
+
+#else //USE_MUTEX
+
+typedef pthread_spinlock_t lock_t;
+#define LOCK_INITIALIZER 0
+#define LOCK_INIT(lock) (pthread_spin_init(lock, 0))
+#define LOCK(lock) (pthread_spin_lock(lock))
+#define UNLOCK(lock) (pthread_spin_unlock(lock))
+#define LOCK_DESTROY(lock) (pthread_spin_destroy(lock))
+
+#endif //USE_MUTEX
+
