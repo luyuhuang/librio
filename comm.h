@@ -2,6 +2,8 @@
  * @author: luyuhuang
  * @brief: common functions
  */
+#ifndef _COMM_H_
+#define _COMM_H_
 
 #include <sys/time.h>
 #include <sys/types.h>
@@ -27,7 +29,7 @@ ssize_t thorough_write(int fd, uint8_t *buffer, int len);
 #ifdef USE_MUTEX
 
 typedef pthread_mutex_t lock_t;
-#define LOCK_INITIALIZER 0
+#define LOCK_INITIALIZER 1
 #define LOCK_INIT(lock) (pthread_mutex_init(lock, NULL))
 #define LOCK(lock) (pthread_mutex_lock(lock))
 #define UNLOCK(lock) (pthread_mutex_unlock(lock))
@@ -36,7 +38,7 @@ typedef pthread_mutex_t lock_t;
 #else //USE_MUTEX
 
 typedef pthread_spinlock_t lock_t;
-#define LOCK_INITIALIZER 0
+#define LOCK_INITIALIZER 1
 #define LOCK_INIT(lock) (pthread_spin_init(lock, 0))
 #define LOCK(lock) (pthread_spin_lock(lock))
 #define UNLOCK(lock) (pthread_spin_unlock(lock))
@@ -44,3 +46,5 @@ typedef pthread_spinlock_t lock_t;
 
 #endif //USE_MUTEX
 
+
+#endif //_COMM_H_

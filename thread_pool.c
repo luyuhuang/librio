@@ -14,15 +14,15 @@ static int _queue_resize(struct thread_pool *pool)
 {
     size_t new_len = pool->tq_len * 2;
     struct task *new_queue = (struct task*)malloc(sizeof(struct task) * new_len);
-    if (pool->tq_head < pool->tq_tail) {
+    if (pool->tq_head > pool->tq_tail) {
         int tlen = pool->tq_tail + 1;
-        memcpy(new_queue, pool->task_queue, sizeof(task_func) * tlen);
+        memcpy(new_queue, pool->task_queue, sizeof(struct task) * tlen);
         int hlen = pool->tq_len = pool->tq_head;
         int pos = new_len - hlen;
-        memcpy(new_queue + pos, pool->task_queue + pool->tq_head, sizeof(task_func) * hlen);
+        memcpy(new_queue + pos, pool->task_queue + pool->tq_head, sizeof(struct task) * hlen);
         pool->tq_head = pos;
     } else {
-        memcpy(new_queue, pool->task_queue, sizeof(task_func) * pool->tq_len);
+        memcpy(new_queue, pool->task_queue, sizeof(struct task) * pool->tq_len);
     }
     free(pool->task_queue);
     pool->tq_len = new_len;
@@ -57,11 +57,14 @@ static int _queue_pop(struct thread_pool *pool, struct task *ret)
 {
     LOCK(&pool->queue_lock);
 
-    if (QUEUE_EMPTY(pool))
+    if (QUEUE_EMPTY(pool)) {
+        UNLOCK(&pool->queue_lock);
         return -1;
+    }
+
     ret->func = pool->task_queue[pool->tq_head].func;
     ret->data = pool->task_queue[pool->tq_head].data;
-    pool->tq_head = (pool->tq_head + 1) & pool->tq_len;
+    pool->tq_head = (pool->tq_head + 1) % pool->tq_len;
 
     UNLOCK(&pool->queue_lock);
     return 0;
