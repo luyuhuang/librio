@@ -84,6 +84,8 @@ struct revent {
     int32_t mtime;          //Only used in timer and file event;
     int repeat;             //Only used in timer event
 
+    bool delete_while_done;
+
     void *callback;
     void *data;
 

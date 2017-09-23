@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <pthread.h>
 
 int64_t get_absolute_time(int32_t mtime);
 int32_t get_interval_time(int64_t mtime);
@@ -29,7 +30,7 @@ ssize_t thorough_write(int fd, uint8_t *buffer, int len);
 #ifdef USE_MUTEX
 
 typedef pthread_mutex_t lock_t;
-#define LOCK_INITIALIZER 1
+#define LOCK_INITIALIZER PTHREAD_MUTEX_INITIALIZER
 #define LOCK_INIT(lock) (pthread_mutex_init(lock, NULL))
 #define LOCK(lock) (pthread_mutex_lock(lock))
 #define UNLOCK(lock) (pthread_mutex_unlock(lock))

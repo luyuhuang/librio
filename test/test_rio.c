@@ -4,11 +4,13 @@
 #include <string.h>
 #include <signal.h>
 #include <assert.h>
+#include <pthread.h>
 
 int pipefd[2];
 
 static int on_timer(struct rtimer *timer, void *data)
 {
+    printf("==TID:%lx==\n", pthread_self());
     static int a = 1;
     
     if (a % 3 == 0)
@@ -22,12 +24,14 @@ static int on_timer(struct rtimer *timer, void *data)
 
 static int on_signal(struct rsignal *signal, void *data)
 {
+    printf("==TID:%lx==\n", pthread_self());
     printf("SIGNAL:%d\n", signal->sig);
     return 0;
 }
 
 static int on_read(struct rfile *file, void *buffer, ssize_t len, void *data)
 {
+    printf("==TID:%lx==\n", pthread_self());
     char *str = (char*)buffer;
     reactor_t r = (reactor_t)data;
 
@@ -41,7 +45,7 @@ static int on_read(struct rfile *file, void *buffer, ssize_t len, void *data)
 
 int main()
 {
-    printf("PID:%d\n", getpid());
+    printf("PID:%d, TID:%lx\n", getpid(), pthread_self());
     reactor_t r = reactor_create();  
     assert(r);
     struct rtimer timer;

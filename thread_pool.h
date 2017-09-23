@@ -11,7 +11,7 @@
 #include <semaphore.h>
 #include "comm.h"
 
-#define THREAD_COUNT 16
+#define THREAD_COUNT 1
 #define TASK_QUEUE_INIT_LEN 32
 
 

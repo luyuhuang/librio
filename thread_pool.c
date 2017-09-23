@@ -130,7 +130,7 @@ static int _thread_pool_pop(struct thread_pool *pool, struct task *ret)
 static void *_thread_dealer(void *arg)
 {
     struct thread_pool *pool = (struct thread_pool*)arg;
-    struct task t;
+    struct task t = {0};
     while (1) {
         _thread_pool_pop(pool, &t);
         t.func(t.data);

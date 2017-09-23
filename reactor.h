@@ -65,4 +65,7 @@ reactor_t reactor_create_for_all(
 );
 void reactor_destroy(reactor_t *r);
 
+reactor_t reactor_instance();
+#define REACTOR_INST (reactor_instance())
+
 #endif //_REACTER_H_

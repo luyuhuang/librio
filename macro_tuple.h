@@ -6,6 +6,8 @@
 #ifndef _MACRO_TUPLE_H_
 #define _MACRO_TUPLE_H_
 
+#include <stdlib.h>
+
 #define TUPLE_1(t1) \
     struct{t1 _1;}
 #define TUPLE_2(t1, t2) \

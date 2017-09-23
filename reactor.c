@@ -42,6 +42,8 @@ int reactor_asyn_read(reactor_t r, struct rfile *file, int32_t mtime, read_cb ca
     event->mtime = mtime;
     event->callback = (void*)callback;
     event->data = data;
+    event->delete_while_done = false;
+    event->__next__ = NULL;
 
     hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
@@ -81,6 +83,8 @@ int reactor_asyn_write(reactor_t r, struct rfile *file, void *buffer, size_t len
     event->buffer_len = len;
     event->callback = (void*)callback;
     event->data = data;
+    event->delete_while_done = false;
+    event->__next__ = NULL;
 
     hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
@@ -117,6 +121,8 @@ int reactor_asyn_accept(reactor_t r, struct rfile *file, int32_t mtime, accept_c
     event->mtime = mtime;
     event->callback = (void*)callback;
     event->data = data;
+    event->delete_while_done = false;
+    event->__next__ = NULL;
 
     hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
@@ -157,6 +163,8 @@ int reactor_asyn_connect(
         event->mtime = mtime;
         event->callback = (void*)callback;
         event->data = data;
+        event->delete_while_done = false;
+        event->__next__ = NULL;
 
         hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
@@ -197,6 +205,8 @@ int reactor_add_timer(reactor_t r, struct rtimer *timer, timer_cb callback, void
     event->repeat = timer->repeat;
     event->callback = (void*)callback;
     event->data = data;
+    event->delete_while_done = false;
+    event->__next__ = NULL;
 
     hashmap_add(r->reactor_events, U2BASIC(event->eventid), P2BASIC(event));
 
@@ -300,6 +310,7 @@ static struct revent *_deal_overtime_event(reactor_t r, struct _h_timer *timer)
 {
     struct revent *event = BASIC2P(hashmap_del(r->reactor_events, U2BASIC(timer->eventid)), struct revent*);
     event->reason = REVENT_TIMEOUT;
+    event->delete_while_done = true;
     if (event->type == REVENT_ACCEPT ||
             event->type == REVENT_READ ||
             event->type == REVENT_WRITE ||
@@ -328,6 +339,7 @@ static struct revent *_deal_file_event(reactor_t r, int fd)
     struct _m_file *file = BASIC2P(hashmap_del(r->file_events, L2BASIC(fd)), struct _m_file*);
     struct revent *event = BASIC2P(hashmap_del(r->reactor_events, U2BASIC(file->eventid)), struct revent*);
     event->reason = REVENT_READY;
+    event->delete_while_done = true;
     if (event->mtime >= 0) {
         struct _h_timer htimer;
         htimer.eventid = event->eventid;
@@ -422,11 +434,11 @@ int reactor_run(reactor_t r)
             }
 
             //event = list_del_at_head(r->activity_events);
-            struct revent *e = event;
+            //struct revent *e = event;
             event = SLIST_NEXT(event);
             SLIST_ERASE_HEAD(&r->activity_events);
-            if (!hashmap_is_in(r->reactor_events, U2BASIC(e->eventid)))
-                free(e);
+            //if (!hashmap_is_in(r->reactor_events, U2BASIC(e->eventid)))
+            //    free(e);
         }
         //list_iter_destroy(&it);
     } while (r->loop);
@@ -443,7 +455,7 @@ reactor_t reactor_create()
 {
     return reactor_create_for_all(
         DFL_MAX_EVENTS,
-        DFL_MAX_BUFFER_SIZE
+       DFL_MAX_BUFFER_SIZE
     );
 }
 
@@ -532,4 +544,18 @@ void reactor_destroy(reactor_t *r)
     
     free(reactor);
     *r = NULL;
+}
+
+static reactor_t _g_reactor_instance = NULL;
+static lock_t _g_instance_lock = LOCK_INITIALIZER;
+
+reactor_t reactor_instance()
+{
+    if (_g_reactor_instance == NULL) {
+        LOCK(&_g_instance_lock);
+        _g_reactor_instance = reactor_create();
+        UNLOCK(&_g_instance_lock);
+    }
+
+    return _g_reactor_instance;
 }
