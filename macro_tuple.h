@@ -108,16 +108,16 @@ typedef void *tuple_t;
                 __typeof__(v4),                                         \
                 __typeof__(v5),                                         \
                 __typeof__(v6)                                          \
-                ) _NEW_TUPLE_6_type;                                    \
-        _NEW_TUPLE_6_type *_NEW_TUPLE_6_t =                             \
-            (_NEW_TUPLE_6_type*)malloc(sizeof(_NEW_TUPLE_6_type));      \
-        _NEW_TUPLE_6_t->_1 = v1;                                        \
-        _NEW_TUPLE_6_t->_2 = v2;                                        \
-        _NEW_TUPLE_6_t->_3 = v3;                                        \
-        _NEW_TUPLE_6_t->_4 = v4;                                        \
-        _NEW_TUPLE_6_t->_5 = v5;                                        \
-        _NEW_TUPLE_6_t->_6 = v6;                                        \
-        (void*)_NEW_TUPLE_6_t;                                          \
+                ) _nEW_TUPLE_6_type;                                    \
+        _nEW_TUPLE_6_type *_nEW_TUPLE_6_t =                             \
+            (_nEW_TUPLE_6_type*)malloc(sizeof(_nEW_TUPLE_6_type));      \
+        _nEW_TUPLE_6_t->_1 = v1;                                        \
+        _nEW_TUPLE_6_t->_2 = v2;                                        \
+        _nEW_TUPLE_6_t->_3 = v3;                                        \
+        _nEW_TUPLE_6_t->_4 = v4;                                        \
+        _nEW_TUPLE_6_t->_5 = v5;                                        \
+        _nEW_TUPLE_6_t->_6 = v6;                                        \
+        (void*)_nEW_TUPLE_6_t;                                          \
      })
 
 
@@ -197,14 +197,14 @@ typedef void *tuple_t;
                 __typeof__(v4),                                         \
                 __typeof__(v5),                                         \
                 __typeof__(v6)                                          \
-                ) _GET_TUPLE_6_type;                                    \
-         _GET_TUPLE_6_type *_GET_TUPLE_6_tuple = (_GET_TUPLE_6_type*)t; \
-         v1 = _GET_TUPLE_6_tuple->_1;                                   \
-         v2 = _GET_TUPLE_6_tuple->_2;                                   \
-         v3 = _GET_TUPLE_6_tuple->_3;                                   \
-         v4 = _GET_TUPLE_6_tuple->_4;                                   \
-         v5 = _GET_TUPLE_6_tuple->_5;                                   \
-         v6 = _GET_TUPLE_6_tuple->_6;                                   \
+                ) _gET_TUPLE_6_type;                                    \
+         _gET_TUPLE_6_type *_gET_TUPLE_6_tuple = (_gET_TUPLE_6_type*)t; \
+         v1 = _gET_TUPLE_6_tuple->_1;                                   \
+         v2 = _gET_TUPLE_6_tuple->_2;                                   \
+         v3 = _gET_TUPLE_6_tuple->_3;                                   \
+         v4 = _gET_TUPLE_6_tuple->_4;                                   \
+         v5 = _gET_TUPLE_6_tuple->_5;                                   \
+         v6 = _gET_TUPLE_6_tuple->_6;                                   \
     } while (0)
 
 

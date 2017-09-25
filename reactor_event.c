@@ -81,7 +81,23 @@ int revent_on_timer(struct revent *event)
 
     void *tuple = NEW_TUPLE_2(event, timer);
 
+#if 0
+    thread_pool_push(THREAD_POOL_INST, LAMBDA(void, (void *arg) {
+        struct revent *event;
+        struct rtimer timer;
+
+        GET_TUPLE_2(arg, event, timer);
+
+        ((timer_cb)event->callback)(&timer, event->data);
+
+        DELETE_TUPLE(arg);
+        if (event->delete_while_done)
+            free(event);
+    }), tuple);
+#else
     thread_pool_push(THREAD_POOL_INST, _revent_on_timer_thread, (void*)tuple);
+#endif
+
     //((timer_cb)event->callback)(&timer, event->data);
     return 0;
 }

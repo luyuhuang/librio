@@ -47,5 +47,11 @@ typedef pthread_spinlock_t lock_t;
 
 #endif //USE_MUTEX
 
+#define LAMBDA(type, func)                  \
+    ({                                      \
+        type _lAMBDA_function_name func     \
+        _lAMBDA_function_name;              \
+    })
+
 
 #endif //_COMM_H_

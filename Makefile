@@ -68,7 +68,8 @@ test: all
 clean:
 	rm -f $(RIO_A) $(RIO_O) $(RIO_SO) \
 		$(TEST_RIO_O) $(TEST_RIO_BIN) $(TEST_HASHMAP_O) $(TEST_HASHMAP_BIN) \
-		$(TEST_MACRO_LIST_O) $(TEST_MACRO_LIST_BIN) test/gmon.out $(TEST_THREAD_POOL_BIN)
+		$(TEST_MACRO_LIST_O) $(TEST_MACRO_LIST_BIN) test/gmon.out $(TEST_THREAD_POOL_BIN) \
+		$(TEST_THREAD_POOL_O)
 
 install:
 	install -p -m 0755 $(RIO_SO) $(INSTALL_SO)
