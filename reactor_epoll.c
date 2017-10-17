@@ -15,7 +15,7 @@ int repoll_create()
     return epoll_create(1024);
 }
 
-int repoll_add_read_file(int epfd, int fd, int oneshot)
+int repoll_add_read_file(int epfd, int fd, bool oneshot)
 {
     struct epoll_event ev = {0};
 
@@ -27,7 +27,7 @@ int repoll_add_read_file(int epfd, int fd, int oneshot)
     return epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
 }
 
-int repoll_add_write_file(int epfd, int fd, int oneshot)
+int repoll_add_write_file(int epfd, int fd, bool oneshot)
 {
     struct epoll_event ev = {0};
 

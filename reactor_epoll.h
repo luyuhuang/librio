@@ -8,6 +8,7 @@
 
 #include <sys/epoll.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -23,8 +24,8 @@ typedef struct epoll_event repoll_event_t;
 
 int set_nonblocking(int fd);
 int repoll_create();
-int repoll_add_read_file(int epfd, int fd, int oneshot);
-int repoll_add_write_file(int epfd, int fd, int oneshot);
+int repoll_add_read_file(int epfd, int fd, bool oneshot);
+int repoll_add_write_file(int epfd, int fd, bool oneshot);
 int repoll_remove_file(int epfd, int fd);
 
 int repoll_wait(int epfd, repoll_event_t *evlist, int maxevents, int timeout);

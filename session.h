@@ -6,12 +6,19 @@
 #ifndef _SESSION_H_
 #define _SESSION_H_
 
-struct session {
+#include "hashmap.h"
+#include "reactor_event.h"
 
+struct session {
+    struct rfile f;
+    int session_id;
 };
 typedef struct session *session_t;
 
 struct session_manager {
+    hashmap_t session_dict;     //session_id <-> session
+    int next_session_id;
+
 
 };
 typedef struct session_manager *session_manager_t;

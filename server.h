@@ -18,10 +18,8 @@ typedef int (*receive_cb)(session_t, void*, size_t);
 typedef int (*connected_cb)(session_t);
 
 struct server {
-    struct rfile *listeners;
-    size_t listener_num;
-    size_t listener_len;
-
+    char *addr;
+    struct rfile listener;
     
     /*callback functions*/
     newconnect_cb on_newconnect;
@@ -33,10 +31,9 @@ struct server {
 
 typedef struct server *server_t;
 
-server_t server_create(newconnect_cb, receive_cb, connected_cb);
+server_t server_create(const char *addr, newconnect_cb, receive_cb, connected_cb);
 void server_destroy(server_t *s);
 
-int server_listen(server_t s, const char *addr);
-void server_run();
+int server_listen(server_t s);
 
 #endif //_SERVER_H_

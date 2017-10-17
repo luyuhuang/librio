@@ -21,8 +21,6 @@
 #define REACTER_ERR     -2      //please check errno
 #define REACTER_TIMEOUT -3
 
-#define TRUE            1
-#define FALSE           0
 
 typedef SLIST(struct revent) activity_list_t;
 struct reactor_manager {

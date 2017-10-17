@@ -60,7 +60,7 @@ int reactor_asyn_read(reactor_t r, struct rfile *file, int32_t mtime, read_cb ca
         minheap_add(r->time_heap, P2BASIC(new_timer));
     }
 
-    int ret = repoll_add_read_file(r->epfd, file->fd, TRUE);
+    int ret = repoll_add_read_file(r->epfd, file->fd, true);
     if (ret == 0)
         return REACTER_OK;
     else
@@ -101,7 +101,7 @@ int reactor_asyn_write(reactor_t r, struct rfile *file, void *buffer, size_t len
         minheap_add(r->time_heap, P2BASIC(new_timer));
     }
     
-    int ret = repoll_add_write_file(r->epfd, file->fd, TRUE);
+    int ret = repoll_add_write_file(r->epfd, file->fd, true);
     if (ret == 0)
         return REACTER_OK;
     else
@@ -139,7 +139,7 @@ int reactor_asyn_accept(reactor_t r, struct rfile *file, int32_t mtime, accept_c
         minheap_add(r->time_heap, P2BASIC(new_timer));
     }
     
-    int ret = repoll_add_read_file(r->epfd, file->fd, TRUE);
+    int ret = repoll_add_read_file(r->epfd, file->fd, true);
     if (ret == 0)
         return REACTER_OK;
     else
@@ -181,7 +181,7 @@ int reactor_asyn_connect(
             minheap_add(r->time_heap, P2BASIC(new_timer));
         }
 
-        ret = repoll_add_write_file(r->epfd, file->fd, TRUE);
+        ret = repoll_add_write_file(r->epfd, file->fd, true);
         if (ret == 0)
             return REACTER_OK;
         else
@@ -486,7 +486,7 @@ reactor_t reactor_create_for_all(
         return NULL;
     }
     set_nonblocking(_pipefd[0]);
-    repoll_add_read_file(reactor->epfd, _pipefd[0], FALSE);
+    repoll_add_read_file(reactor->epfd, _pipefd[0], false);
 
     return reactor;
 }
