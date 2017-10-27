@@ -36,7 +36,7 @@ typedef struct server *server_t;
 server_t server_create(newconnect_cb, receive_cb, connected_cb);
 void server_destroy(server_t *s);
 
-int server_listen(const char *addr);
+int server_listen(server_t s, const char *addr);
 void server_run();
 
 #endif //_SERVER_H_
